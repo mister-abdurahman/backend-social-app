@@ -53,19 +53,21 @@ app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 
 // Serving the front End
-app.use(express.static(path.join(__dirname, "./client/build")));
+// app.use(express.static(path.join(__dirname, "./client/build")));//* */
 
 //Set static folder
 // app.use(express.static("client/build"));
 
-app.get("*", function (_, res) {
-  res.sendFile(
-    path.join(__dirname, "./client/build/index.html"),
-    function (err) {
-      res.status(500).send(err);
-    }
-  );
-});
+/*
+// app.get("*", function (_, res) {
+//   res.sendFile(
+//     path.join(__dirname, "./client/build/index.html"),
+//     function (err) {
+//       res.status(500).send(err);
+//     }
+//   );
+// });
+*/
 
 // app.get("*", (_, res) => {
 //   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
