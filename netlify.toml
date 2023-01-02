@@ -1,6 +1,6 @@
 [build]
 
 [[redirects]]
-    to="/index:splat"
+    to="/index:splat" 
     from="/*"
     status=200 
