@@ -19,7 +19,6 @@ import Post from "../models/Post.js";
 import { users, posts } from "../data/index.js";
 
 dotenv.config();
-console.log(process.env.MONGO_URL);
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -50,6 +49,9 @@ app.post("/auth/register", upload.single("picture"), register);
 app.post("/posts", verifyToken, upload.single("picture"), createPost);
 
 /* ROUTES */
+app.use("/", (req, res) => {
+  res.status(200).send("Welcome.!");
+});
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
@@ -58,7 +60,7 @@ app.use("/posts", postRoutes);
 // app.use(express.static(path.join(__dirname, "./client/build")));
 
 //Set static folder
-app.use(express.static("client/build"));
+// app.use(express.static("client/build"));
 
 // app.get("*", function (_, res) {
 //   res.sendFile(
@@ -69,9 +71,9 @@ app.use(express.static("client/build"));
 //   );
 // });
 
-app.get("*", (_, res) => {
-  res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-});
+// app.get("*", (_, res) => {
+//   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+// });
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 3000;
