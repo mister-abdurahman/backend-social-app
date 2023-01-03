@@ -49,7 +49,7 @@ app.post("/auth/register", upload.single("picture"), register);
 app.post("/posts", verifyToken, upload.single("picture"), createPost);
 
 /* ROUTES */
-app.use("/", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).send("Welcome.!");
 });
 app.use("/auth", authRoutes);
