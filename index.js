@@ -99,8 +99,8 @@ app.get("*", function (_, res) {
 // });
 
 /* MONGOOSE SETUP */
-const PORT = process.env.PORT || 3000;
-
+const PORT = process.env.PORT;
+console.log(PORT);
 mongoose.set("strictQuery", false);
 
 mongoose
