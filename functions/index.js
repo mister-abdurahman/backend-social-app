@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-import cors from "cors";
+import fetchNoCors from "fetch-no-cors";
 import dotenv from "dotenv";
 import multer from "multer";
 import helmet from "helmet";
@@ -31,7 +31,16 @@ app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 // app.use(cors());
-app.use("/assets", express.static(path.join(__theDirname, "public/assets")));
+var corsOptions = {
+  origin: "https://relaxed-scone-3e19fa.netlify.app/",
+  optionsSuccessStatus: 200,
+};
+
+app.use(
+  "/assets",
+  cors(corsOptions),
+  express.static(path.join(__theDirname, "public/assets"))
+);
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
@@ -45,24 +54,37 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ROUTES WITH FILES */
-app.post("/auth/register", upload.single("picture"), register);
-app.post("/posts", verifyToken, upload.single("picture"), createPost);
+app.post(
+  "/auth/register",
+  cors(corsOptions),
+  upload.single("picture"),
+  register
+);
+app.post(
+  "/posts",
+  cors(corsOptions),
+  verifyToken,
+  upload.single("picture"),
+  createPost
+);
 
 /* ROUTES */
-app.get("/", (req, res) => {
+app.get("/", cors(corsOptions), (req, res) => {
   res.status(200).send("Welcome.!");
 });
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/posts", postRoutes);
+app.use("/auth", cors(corsOptions), authRoutes);
+app.use("/users", cors(corsOptions), userRoutes);
+app.use("/posts", cors(corsOptions), postRoutes);
 
 // Serving the front End
-app.use(express.static(path.join(__dirname, "./client/build")));
+app.use(
+  express.static(path.join(__dirname, "./client/build"), cors(corsOptions))
+);
 
 //Set static folder
 // app.use(express.static("client/build"));
 
-app.get("*", function (_, res) {
+app.get("*", cors(corsOptions), function (_, res) {
   res.sendFile(
     path.join(__dirname, "./client/build/index.html"),
     function (err) {
