@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import cors from "cors";
 import fetchNoCors from "fetch-no-cors";
 import dotenv from "dotenv";
 import multer from "multer";
@@ -14,6 +15,7 @@ import postRoutes from "../routes/posts.js";
 import { register } from "../controllers/auth.js";
 import { createPost } from "../controllers/posts.js";
 import { verifyToken } from "../middleware/auth.js";
+import * as url from "url";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import { users, posts } from "../data/index.js";
@@ -30,17 +32,26 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-// app.use(cors());
-var corsOptions = {
-  origin: "https://relaxed-scone-3e19fa.netlify.app/",
-  optionsSuccessStatus: 200,
-};
+app.use(cors());
+// const corsOptions = {
+//   origin: "https://relaxed-scone-3e19fa.netlify.app/",
+//   optionsSuccessStatus: 200,
+// };
 
-app.use(
-  "/assets",
-  cors(corsOptions),
-  express.static(path.join(__theDirname, "public/assets"))
-);
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Accept, X-Requested-With, Authorization, Content-Type, x-custom-header"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,PUT,POST,PATCH,DELETE,OPTIONS"
+  );
+  next();
+});
+
+app.use("/assets", express.static(path.join(__theDirname, "public/assets")));
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
@@ -54,37 +65,27 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ROUTES WITH FILES */
-app.post(
-  "/auth/register",
-  cors(corsOptions),
-  upload.single("picture"),
-  register
-);
-app.post(
-  "/posts",
-  cors(corsOptions),
-  verifyToken,
-  upload.single("picture"),
-  createPost
-);
+app.post("/auth/register", upload.single("picture"), register);
+app.post("/posts", verifyToken, upload.single("picture"), createPost);
 
 /* ROUTES */
-app.get("/", cors(corsOptions), (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).send("Welcome.!");
 });
-app.use("/auth", cors(corsOptions), authRoutes);
-app.use("/users", cors(corsOptions), userRoutes);
-app.use("/posts", cors(corsOptions), postRoutes);
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
+
+// Setting dirname in module
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 // Serving the front End
-app.use(
-  express.static(path.join(__dirname, "./client/build"), cors(corsOptions))
-);
+app.use(express.static(path.join(__dirname, "./client/build")));
 
 //Set static folder
 // app.use(express.static("client/build"));
 
-app.get("*", cors(corsOptions), function (_, res) {
+app.get("*", function (_, res) {
   res.sendFile(
     path.join(__dirname, "./client/build/index.html"),
     function (err) {
