@@ -45,7 +45,7 @@ app.use((req, res, next) => {
   );
   next();
 });
-
+console.log(__dirname);
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 /* FILE STORAGE */
@@ -75,23 +75,23 @@ app.use("/posts", postRoutes);
 // const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 // Serving the front End
-app.use(express.static(path.join(__dirname, "./client/build")));
+// app.use(express.static(path.join(__dirname, "./client/build")));
 
 //Set static folder
-// app.use(express.static("client/build"));
+app.use(express.static("client/build"));
 
-app.get("*", function (_, res) {
-  res.sendFile(
-    path.join(__dirname, "./client/build/index.html"),
-    function (err) {
-      res.status(500).send(err);
-    }
-  );
-});
-
-// app.get("*", (_, res) => {
-//   res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+// app.get("*", function (_, res) {
+//   res.sendFile(
+//     path.join(__dirname, "./client/build/index.html"),
+//     function (err) {
+//       res.status(500).send(err);
+//     }
+//   );
 // });
+
+app.get("*", (_, res) => {
+  res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+});
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT;
