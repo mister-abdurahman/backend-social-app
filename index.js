@@ -2,7 +2,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
-import fetchNoCors from "fetch-no-cors";
 import dotenv from "dotenv";
 import multer from "multer";
 import helmet from "helmet";
@@ -24,7 +23,7 @@ dotenv.config();
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
-const __theDirname = path.dirname(__filename);
+const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 app.use(helmet());
@@ -33,10 +32,6 @@ app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
-// const corsOptions = {
-//   origin: "https://relaxed-scone-3e19fa.netlify.app/",
-//   optionsSuccessStatus: 200,
-// };
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -51,7 +46,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/assets", express.static(path.join(__theDirname, "public/assets")));
+app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
@@ -77,7 +72,7 @@ app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 
 // Setting dirname in module
-const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+// const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 // Serving the front End
 app.use(express.static(path.join(__dirname, "./client/build")));
