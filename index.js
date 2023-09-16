@@ -45,7 +45,6 @@ app.use((req, res, next) => {
   );
   next();
 });
-console.log(__dirname);
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 /* FILE STORAGE */
@@ -65,7 +64,7 @@ app.post("/posts", verifyToken, upload.single("picture"), createPost);
 
 /* ROUTES */
 app.get("/", (req, res) => {
-  res.status(200).send("Welcome.!");
+  res.status(200).send("Welcome To Sociopedia.!");
 });
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
@@ -95,7 +94,6 @@ app.get("*", (_, res) => {
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT;
-console.log(PORT);
 mongoose.set("strictQuery", false);
 
 mongoose
