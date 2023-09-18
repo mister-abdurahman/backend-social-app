@@ -110,7 +110,9 @@ export async function login(req, res, next) {
     const token = createToken(user._id);
     res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
     delete user.password;
-    res.status(200).json({ Email: user.email, id: user._id });
+    // res.status(200).json({ Email: user.email, id: user._id });
+    console.log(user);
+    res.status(200).json({ user, token });
   } catch (error) {
     res.status(400).json({
       status: "error",
